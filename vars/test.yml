@@ -8,14 +8,22 @@ monit_services:
     target: /var/run/sshd.pid
     start: /usr/sbin/service sshd start
     stop: /usr/sbin/service sshd stop
-  - name: apache
+    rules:
+      - "if failed port 22 protocol ssh then restart"
+      - "if 5 restarts within 5 cycles then timeout"
+  - name: apache2
     type: process
-    target: /var/run/apache2.pid
+    target: /var/run/apache2/apache2.pid
     start: /usr/sbin/service apache2 start
     stop: /usr/sbin/service apache2 stop
     rules:
       - "if failed port 80 protocol http then restart"
       - "if 5 restarts within 5 cycles then timeout"
+      - "if totalcpu > 80% for 3 cycles then alert"
+      - "if totalmem > 400.0 MB for 5 cycles then alert"
+      - "if children > 250 then alert"
+      - "if loadavg(5min) > 20 for 8 cycles then alert"
+      - "if failed port 8080 then exec '/etc/monit/slack.rb'"
   - name: localhost
     type: system
     rules:
@@ -35,6 +43,55 @@ monit_services:
     target: /etc/timezone
     rules:
       - "if failed uid root then alert"
+  - name: mysql
+    type: process
+    target: "/var/run/mysqld/mysqld.pid"
+    start: "/etc/init.d/mysql start"
+    stop: "/etc/init.d/mysql stop"
+    rules:
+      - "if failed host 127.0.0.1 port {{ mysql_port}} then restart"
+      - "if 5 restarts within 5 cycles then timeout"
+  - name: exim4
+    type: process
+    target: "/var/run/exim4/exim.pid"
+    start: "/etc/init.d/exim4 start"
+    stop: "/etc/init.d/exim4 stop"
+    rules:
+      - "if failed host 127.0.0.1 port 25 protocol smtp then alert"
+      - "if 5 restarts within 5 cycles then timeout"
+  - name: fail2ban
+    type: process
+    target: "/var/run/fail2ban/fail2ban.pid"
+    start: "/etc/init.d/fail2ban force-start"
+    stop: "/etc/init.d/fail2ban stop || :"
+    rules:
+      - "if failed unixsocket /var/run/fail2ban/fail2ban.sock then restart"
+      - "if 5 restarts within 5 cycles then timeout"
+  - name: varnish
+    type: process
+    target: "/var/run/varnishd.pid"
+    start: "/etc/init.d/varnish start"
+    stop: "/etc/init.d/varnish stop"
+    rules:
+      - "if failed host 127.0.0.1 port 80 protocol http"
+      - "  and request \"/heart-beat\""
+      - "  then restart"
+      - "if cpu > 60% for 2 cycles then alert"
+      - "if cpu > 80% for 5 cycles then restart"
+      - "if totalmem > 200.0 MB for 5 cycles then restart"
+      - "if children > 250 then restart"
+      - "if loadavg(5min) greater than 10 for 8 cycles then stop"
+      - "if 3 restarts within 5 cycles then timeout"
+  - name: pound
+    type: process
+    target: "/var/run/pound.pid"
+    start: "/etc/init.d/pound start"
+    stop: "/etc/init.d/pound stop"
+    rules:
+      - "if loadavg(5min) greater than 10 for 8 cycles then stop"
+      - "if failed host 127.0.0.1 port 80 protocol http then restart"
+      - "if failed host 127.0.0.1 port 443 then restart"
+      - "if 3 restarts within 5 cycles then timeout"
 monit_webinterface_enabled: true
 monit_webinterface_acl_rules:
   - "localhost"
