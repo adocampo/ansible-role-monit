@@ -50,3 +50,13 @@
     mode: 0644
   notify: restart monit
   when: monit_mail_enabled
+
+- name: Create logrotate entry for monit.log
+  template:
+    src: logrotate_monit.j2
+    dest: "/etc/logrotate.d/monit"
+    owner: root
+    group: root
+    mode: 0644
+  sudo: true
+  when: ansible_os_family == "Debian"

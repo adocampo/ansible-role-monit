@@ -9,8 +9,3 @@
 
 - include: monitors.yml
   tags: monit_monitors
-
-- name: Include OS-specific tasks.
-  include: debian/logs.yml
-  tags: monit_pkg
-  when: ansible_os_family == "Debian"

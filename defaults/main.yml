@@ -22,7 +22,7 @@ monit_alert_addresses: []
   # - support@email.com
 
 monit_alert_mail_from: "root"
-monit_alert_mail_subject: alert
+monit_alert_mail_subject: 'Monit Alert: {{ inventory_hostname }}'
 monit_alert_mail_message: |+
   $EVENT Service $SERVICE
              Date:        $DATE
