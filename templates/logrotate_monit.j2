@@ -1,9 +1,6 @@
 /var/log/monit.log {
+    copytruncate
     missingok
     notifempty
     size 100k
-    create 0644 root root
-    postrotate
-        /bin/kill -HUP `cat /var/run/monit.pid 2>/dev/null` 2> /dev/null || true
-    endscript
 }
