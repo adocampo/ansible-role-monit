@@ -1,12 +1,13 @@
 ---
 
 # Include variables and define needed variables.
-- name: Include OS-specific tasks.
-  include: debian/pkg.yml
+- name: Include OS-specific tasks | Debian.
+  include: Debian/pkg.yml
   tags: monit_pkg
   when: ansible_os_family == "Debian"
 
-- include: redhat/pkg.yml
+- name: Include OS-specific tasks | Redhat.
+  include: Redhat/pkg.yml
   tags: monit_pkg
   when: ansible_os_family == "RedHat"
 
