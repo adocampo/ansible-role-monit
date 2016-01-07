@@ -2,6 +2,10 @@
 {% if monit_webinterface_enabled %}
 set httpd port {{ monit_webinterface_port }} and
     use address {{ monit_webinterface_bind }}
+{% if monit_ssl_enable %}
+    SSL ENABLE
+    PEMFILE {{ monit_ssl_cert }}
+{% endif %}
 {% if monit_webinterface_acl_rules is defined %}
 {% for rule in monit_webinterface_acl_rules %}
     allow {{ rule }}

@@ -43,6 +43,10 @@ monit_webinterface_enabled: true
 monit_webinterface_bind: 0.0.0.0
 monit_webinterface_port: 2812
 
+# enabkle monit access over https
+monit_ssl_enable: no
+monit_ssl_cert: ''
+
 monit_apache_rules:
  - "if totalcpu > 80% for 3 cycles then alert"
  - "if totalmem > 400.0 MB for 5 cycles then alert"
