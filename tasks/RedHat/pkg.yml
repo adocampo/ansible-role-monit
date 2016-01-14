@@ -3,3 +3,6 @@
   yum:
     name: monit
     state: present
+
+- name: ensure monit starts on a fresh reboot
+  service: name=monit state=started enabled=yes

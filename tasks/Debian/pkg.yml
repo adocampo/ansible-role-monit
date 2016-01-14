@@ -5,3 +5,6 @@
     update_cache: yes
     cache_valid_time: 3600
     state: present
+
+- name: ensure monit starts on a fresh reboot
+  service: name=monit state=started enabled=yes
