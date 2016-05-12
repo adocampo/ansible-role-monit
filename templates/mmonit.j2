@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+
+{% if monit_mmonit_enabled %}
+
+set mmonit https://{{ monit_mmonit_user }}:{{ monit_mmonit_password }}@{{ monit_mmonit_host }}/collector
+
+{% endif %}

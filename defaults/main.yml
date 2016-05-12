@@ -23,3 +23,8 @@ monit_apache_rules:
 monit_memcached_rules:
  - "if failed host 127.0.0.1 port 11211 protocol MEMCACHE then restart"
  - "if cpu > 80% for 3 cycles then alert"
+
+monit_mmonit_enabled: false
+#monit_mmonit_user: "monit"
+#monit_mmonit_password: "monit"
+#monit_mmonit_host: "mmonit.company.com"
