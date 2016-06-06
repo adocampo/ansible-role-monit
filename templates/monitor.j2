@@ -7,6 +7,7 @@ check process {{ monit_monitor.name }} with pidfile {{ monit_monitor.target }}
   start program = "{{ monit_monitor.start }}"
   {%- if monit_monitor.user is defined %} as uid {{monit_monitor.user}}{% endif %}
   {%- if monit_monitor.group is defined %} and gid {{monit_monitor.group}}{% endif %}
+  {%- if monit_monitor.start_timeout_seconds is defined %} with timeout {{monit_monitor.start_timeout_seconds}} seconds{% endif %}
 {% endif %}
 
 {% if monit_monitor.stop is defined %}
