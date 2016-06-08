@@ -15,7 +15,7 @@
     mode: 0755
     owner: root
     group: root
-  with_items: monit_custom_checks
+  with_items: "{{monit_custom_checks}}"
 
 - name: monitors - Write monitors
   template:
@@ -61,6 +61,6 @@
 
 - name: monitors - Start configured monitors
   command: monit start {{ item }}
-  with_items: ansible_local.monit.monit_configured_services
+  with_items: "{{ansible_local.monit.monit_configured_services}}"
   when: monit_start_monitors and ansible_local.monit.monit_configured_services is defined and item not in monit_unstartable_monitors
   ignore_errors: yes
