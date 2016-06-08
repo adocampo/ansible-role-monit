@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  sudo: yes
+  become: true
 
   vars_files:
     - vars/test.yml
@@ -18,7 +18,7 @@
 
 - name: monit - testing reloads on monit_services changes
   hosts: all
-  sudo: yes
+  become: true
   tags: monit_tests_reloads
 
   vars_files:
