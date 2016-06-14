@@ -9,4 +9,9 @@ set eventqueue
   basedir {{ monit_eventqueue_dir | default('/var/lib/monit/events') }}
   slots {{ monit_eventqueue_slots | default(100) }}
 {% endif %}
+
+{% if monit_mmonit_enabled %}
+set mmonit https://{{ monit_mmonit_user }}:{{ monit_mmonit_password }}@{{ monit_mmonit_host }}/collector
+{% endif %}
+
 include {{ monit_includes }}/*

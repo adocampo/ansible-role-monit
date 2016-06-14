@@ -35,13 +35,3 @@
     mode: 0644
   notify: restart monit
   when: monit_mail_enabled
-
-- name: config - Setup M/Monit server configuration
-  template:
-    src: mmonit.j2
-    dest: "{{ monit_includes }}/mmonit"
-    owner: root
-    group: root
-    mode: 0644
-  notify: restart monit
-  when: monit_mmonit_enabled
