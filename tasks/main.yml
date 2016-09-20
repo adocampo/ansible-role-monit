@@ -12,3 +12,6 @@
 
 - include: monitors.yml
   tags: monit_monitors
+
+- name: monit is running
+  service: name=monit state=started
