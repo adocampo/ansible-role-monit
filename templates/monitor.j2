@@ -24,6 +24,9 @@ check filesystem {{ monit_monitor.name }} with path {{ monit_monitor.target }}
 {% elif monit_monitor.type == 'program' %}
 check program {{ monit_monitor.name }} with path {{ monit_monitor.target }}
     {% if monit_monitor.every is defined %}every "{{ monit_monitor.every }}"{% endif %}
+{% elif monit_monitor.type == 'apache-status' %}
+if failed host {{ monit_monitor.host }} port {{ monit_monitor.port }} protocol apache-status path {{ monit_monitor.target }}
+
 {% endif %}
 
 {% if monit_monitor.rules is defined %}
