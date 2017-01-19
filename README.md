@@ -63,7 +63,7 @@ You can use a custom webhook to post alerts to slack
   `monit_slack_channel`: 'general' - the channel you want to post to
 
 Then in any monitor add a line such as:
-   - "if failed port 8080 then exec '/etc/monit/slack.rb'"
+   - "if failed port 8080 then exec '/usr/bin/ruby /etc/monit/slack.rb'"
 
 Custom facts
 ------------
