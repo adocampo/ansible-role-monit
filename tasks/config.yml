@@ -68,5 +68,5 @@
     dest: "/etc/monit/slack.rb"
     owner: root
     group: root
-    mode: 0644
+    mode: 0744
   become: true
