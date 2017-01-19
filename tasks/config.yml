@@ -61,3 +61,12 @@
     mode: 0644
   become: true
   when: ansible_os_family == "Debian"
+
+- name: Put up Slack integration file if required
+  template:
+    src: slack.rb.j2
+    dest: "/etc/monit/slack.rb"
+    owner: root
+    group: root
+    mode: 0644
+  become: true

@@ -37,7 +37,9 @@ monit_alert_mail_format:
   subject: "{{ monit_alert_mail_subject }}"
   message: "{{ monit_alert_mail_message }}"
 
-
+monit_slack_webhook: false
+monit_slack_webhook_key: ''
+monit_slack_channel: 'general'
 
 monit_webinterface_enabled: true
 monit_webinterface_bind: 0.0.0.0
