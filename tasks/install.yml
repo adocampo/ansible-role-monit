@@ -1,0 +1,16 @@
+---
+
+- name: Include OS-specific tasks | Debian.
+  include: Debian/pkg.yml
+  tags: monit_pkg
+  when: ansible_os_family == "Debian" and not monit_install_from_source
+
+- name: Include OS-specific tasks | Redhat.
+  include: RedHat/pkg.yml
+  tags: monit_pkg
+  when: ansible_os_family == "RedHat"  and not monit_install_from_source
+
+- name: Install from source
+  include: Debian/install.yml
+  tags: monit_install
+  when: ansible_os_family == "Debian"  and monit_install_from_source
