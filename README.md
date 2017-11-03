@@ -8,6 +8,10 @@ Requirements
 
 An ansible ready host.
 
+Begun to update with a install from source as the packages are out of date (see https://github.com/idealista/monit-role)
+To_do:
+  - possibly specific a backports version?
+
 Role Variables
 --------------
 
