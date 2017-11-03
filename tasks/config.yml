@@ -1,56 +1,71 @@
 ---
 
 # Include variables and define needed variables.
-- name: Include OS-specific tasks | Debian.
-  include: Debian/pkg.yml
-  tags: monit_pkg
-  when: ansible_os_family == "Debian"
 
-- name: Include OS-specific tasks | Redhat.
-  include: RedHat/pkg.yml
-  tags: monit_pkg
-  when: ansible_os_family == "RedHat"
+- name: MONIT | Create directories
+  block:
+    - name: create includes folder
+      file:
+        path: "{{ monit_includes }}"
+        state: directory
+        mode: 0600
+    - name: create id folder
+      file:
+        path: "{{ monit_lib_dir }}"
+        state: directory
+        mode: 0600
+        owner: "{{ monit_user }}"
+        group: "{{ monit_group }}"
+    - name: MONIT | Create log directory
+      file:
+        path: "{{ monit_log_dir }}"
+        state: directory
+        owner: "{{ monit_user }}"
+        group: "{{ monit_group }}"
+    - name: MONIT | Create conf directories
+      file:
+        path: "{{ monit_conf_dir }}/{{ item }}/"
+        state: directory
+        owner: "{{ monit_user }}"
+        group: "{{ monit_group }}"
+        recurse: yes
+      with_items:
+        - conf.d
+        - monitrc.d
+  tags: monit_config
 
-- name: create includes folder
-  file:
-    path: "{{ monit_includes }}"
-    state: directory
-    mode: 0600
 
+- name: MONIT | Config files
+  block:
+    - name: config - Setup monitrc
+      template:
+        src: monitrc.j2
+        dest:  "{{monitrc_conf}}"
+        owner: root
+        group: root
+        mode: 0700
+      notify: restart monit
 
-- name: create id folder
-  file:
-    path: "{{ monit_id_folder }}"
-    state: directory
-    mode: 0600
+    - name: config - Setup webinterface
+      template:
+        src: webinterface.j2
+        dest: "{{ monit_includes }}/webinterface"
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart monit
 
-- name: config - Setup monitrc
-  template:
-    src: monitrc.j2
-    dest:  "{{monitrc_conf}}"
-    owner: root
-    group: root
-    mode: 0700
-  notify: restart monit
+    - name: config - Setup mail alerts
+      template:
+        src: mail.j2
+        dest: "{{ monit_includes }}/mail"
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart monit
+      when: monit_mail_enabled
+  tags: monit_config
 
-- name: config - Setup webinterface
-  template:
-    src: webinterface.j2
-    dest: "{{ monit_includes }}/webinterface"
-    owner: root
-    group: root
-    mode: 0644
-  notify: restart monit
-
-- name: config - Setup mail alerts
-  template:
-    src: mail.j2
-    dest: "{{ monit_includes }}/mail"
-    owner: root
-    group: root
-    mode: 0644
-  notify: restart monit
-  when: monit_mail_enabled
 
 - name: Create logrotate entry for monit.log
   template:
