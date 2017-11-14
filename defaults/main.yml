@@ -43,7 +43,7 @@ monit_services:
     start: "/bin/systemctl start php{{ php_version }}-fpm.service"
     stop: "/bin/systemctl stop php{{ php_version }}-fpm.service"
     rules:
-      - "if failed port 9009 type TCP then restart"
+      - "if failed port 9000 type TCP then restart"
       - "if 5 restarts with 5 cycles then timeout"
   - name: mysql
     type: process
