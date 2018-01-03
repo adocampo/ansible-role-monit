@@ -3,3 +3,5 @@
 monitrc_conf: "{{ monit_conf_dir }}/monitrc"
 monit_includes: "{{ monit_conf_dir }}/conf.d"
 
+#monit_bin: '/usr/local/bin/monit'
+monit_bin: '/usr/bin'

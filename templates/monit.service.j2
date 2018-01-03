@@ -5,9 +5,9 @@ After=network.target
 [Service]
 Type=simple
 KillMode=process
-ExecStart=/usr/local/bin/monit -I -c {{ monit_conf_dir }}/monitrc
-ExecStop=/usr/local/bin/monit -c {{ monit_conf_dir }}/monitrc quit
-ExecReload=/usr/local/bin/monit -c {{ monit_conf_dir }}/monitrc reload
+ExecStart={{ monit_bin }}/monit -I -c {{ monit_conf_dir }}/monitrc
+ExecStop={{ monit_bin }}/monit -c {{ monit_conf_dir }}/monitrc quit
+ExecReload={{ monit_bin }}/monit -c {{ monit_conf_dir }}/monitrc reload
 Restart=on-abnormal
 {% if monit_enable_superuser %}
 User=root
