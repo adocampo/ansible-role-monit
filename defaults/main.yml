@@ -73,6 +73,8 @@ monit_service_enabled: True
 monit_service_state: started
 ## Service options
 monit_install_from_source: false
+
+monit_enable_superuser: false
 # Owner
 monit_user: monit
 monit_group: monit
