@@ -3,4 +3,5 @@
   yum:
     name: monit
     state: present
+  tags: monit_pkg
 
