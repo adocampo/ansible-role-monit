@@ -17,7 +17,7 @@
   when: ansible_os_family == "Debian" and not monit_install_from_source
 
 - name: Include OS-specific tasks | Redhat.
-  import: RedHat/pkg.yml
+  import_tasks: RedHat/pkg.yml
   tags: monit_pkg
   when: ansible_os_family == "RedHat"  and not monit_install_from_source
 
