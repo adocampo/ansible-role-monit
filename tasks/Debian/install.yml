@@ -8,17 +8,6 @@
     state: absent
 
 
-- name: MONIT | Ensure monit group
-  group:
-    name: "{{ monit_group }}"
-
-- name: MONIT | Ensure monit user
-  user:
-    name: "{{ monit_user }}"
-    group: "{{ monit_group }}"
-    home: /bin/false
-    createhome: yes
-
 - name: MONIT | Installing dependencies
   apt:
     pkg: "{{ item }}"
