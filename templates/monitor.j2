@@ -4,6 +4,9 @@
 
 {% if monit_monitor.type == 'process' %}
 check process {{ monit_monitor_name }} with pidfile {{ monit_monitor.target }}
+{% if monit_monitor.group is defined %}
+  group "{{ monit_monitor.group }}"
+{% endif %}
 {% if monit_monitor.start is defined %}
   start program = "{{ monit_monitor.start }}"
 {% endif %}
@@ -24,5 +27,10 @@ check program {{ monit_monitor_name }} with path "{{ monit_monitor.target }}"
 {% if monit_monitor.rules is defined %}
 {% for rule in monit_monitor.rules %}
   {{ rule }}
+{% endfor %}
+{% endif %}
+{% if monit_monitor.depends is defined %}
+{% for depend in monit_monitor.depends %}
+  depends on {{ depend }}
 {% endfor %}
 {% endif %}
