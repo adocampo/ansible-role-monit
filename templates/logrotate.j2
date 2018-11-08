@@ -1,0 +1,11 @@
+/var/log/monit.log /var/log/rollbar-agent.log {
+  daily
+  rotate 5
+  compress
+  notifempty
+  copytruncate
+  dateext
+  dateformat -%Y%m%d-%s
+  create 644 root root
+  su root root
+}

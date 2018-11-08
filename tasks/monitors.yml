@@ -38,3 +38,12 @@
   with_items: "{{ monit_services_present.stdout_lines | default([]) }}"
   when: monit_service_delete_unlisted and item|basename not in ansible_local.monit.monit_configured_services
   notify: restart monit
+
+- name: monitors - Enable basic monitors
+  template:
+    src: system.j2
+    dest: "{{ monit_includes }}/system"
+    owner: root
+    group: root
+  when: monit_basic_monitors_enabled
+  notify: restart monit

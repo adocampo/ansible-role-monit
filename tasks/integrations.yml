@@ -1,0 +1,41 @@
+---
+
+- name: install rollbar-agent pip module
+  pip:
+    name: rollbar-agent
+    version: 0.4.0
+  when: monit_rollbar_enabled
+
+- name: copy rollbar-agent config file
+  template:
+    src: rollbar-agent.conf.j2
+    dest: /etc/rollbar-agent.conf
+  when: monit_rollbar_enabled
+
+- name: copy rollbar-agent config file
+  template:
+    src: rollbar-agent-init.sh.j2
+    mode: 0755
+    dest: /etc/init.d/rollbar-agent
+  when: monit_rollbar_enabled
+
+- name: enable and start rollbar-agent
+  service:
+    name: rollbar-agent
+    state: restarted
+    enabled: yes
+  when: monit_rollbar_enabled
+
+  # put webhook URL to /etc/monit/slack-url
+- name: copy script with slack integration
+  copy:
+    src: slack.sh
+    dest: /usr/local/bin/slack.sh
+    mode: 0755
+  when: monit_slack_webhook_url is defined
+
+- name: put webhook URL in place
+  lineinfile:
+    dest: /etc/monit/slack-url
+    line: "{{monit_slack_webhook_url}}"
+  when: monit_slack_webhook_url is defined

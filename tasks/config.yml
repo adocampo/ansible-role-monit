@@ -10,7 +10,7 @@
 
 - name: create lib folder
   file: path="{{ monit_lib_folder }}" state=directory mode=0600
-  
+
 - name: config - Setup monitrc
   template:
     src: monitrc.j2
@@ -38,3 +38,7 @@
     mode: 0644
   notify: restart monit
   when: monit_mail_enabled
+
+- name: log rotation
+  template: src=logrotate.j2 dest=/etc/logrotate.d/rollbar-agent owner=root group=root mode=0644
+  when: monit_rollbar_enabled
