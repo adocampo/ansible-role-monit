@@ -1,0 +1,5 @@
+---
+
+- src: https://github.com/jpartain89/ansible-role-monit-from-source
+  name: jpartain89.install-monit-from-source
+  scm: git

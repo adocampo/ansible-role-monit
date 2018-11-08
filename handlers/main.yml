@@ -1,3 +1,5 @@
 ---
+
 - name: restart monit
-  service: name=monit state=restarted
+  shell: "{{ monit_executable }} -c {{ monitrc_conf }} reload"
+  become: true

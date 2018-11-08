@@ -1,37 +1,52 @@
 ---
-- name: monitors - Write monitors
+
+- name: Monitors | Write Parent Monitors
   template:
     src: monitor.j2
     dest: "{{ monit_includes }}/{{ item.name }}"
-    owner: root
-    group: root
-  with_items: "{{ monit_services }}"
+    owner: "{{ monit_owner }}"
+    group: "{{ monit_group }}"
+    mode: 0660
+  with_items:
+    - "{{ parent_monit_services }}"
+  notify: restart monit
+  when: parent_monit_services is defined
+
+- name: Monitors | Write Monitors
+  template:
+    src: monitor.j2
+    dest: "{{ monit_includes }}/{{ item.name }}"
+    owner: "{{ monit_owner }}"
+    group: "{{ monit_group }}"
+    mode: 0660
+  with_items:
+    - "{{ monit_services }}"
   notify: restart monit
 
-- name: monitors - Create facts directory
+- name: Monitors | Create Facts Directory
   file:
     path: "/etc/ansible/facts.d"
-    mode: 0755
+    mode: 0775
     state: directory
 
-- name: monitors - Registers configured monitors
+- name: Monitors | Register Configured Monitors
   template:
     src: "monit.fact.j2"
     dest: "/etc/ansible/facts.d/monit.fact"
     mode: 0644
   register: monit_write_facts
 
-- name: monitors - Reload facts
+- name: Monitors | Reload Ansible Facts
   setup:
     filter: "ansible_local"
   when: monit_write_facts.changed
 
-- name: monitors - List configured monitors
+- name: Monitors | List Configured Monitors
   command: ls -1 {{ monit_includes }}
   register: monit_services_present
   changed_when: false
 
-- name: monitors - Remove unused monitors
+- name: Monitors | Remove Unused Monitors
   file:
     path: "{{ monit_includes }}/{{ item }}"
     state: absent

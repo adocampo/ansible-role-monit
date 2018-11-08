@@ -1,17 +1,32 @@
 ---
-- include: debian/pkg.yml
-  tags: monit_pkg
-  when: ansible_os_family == "Debian"
 
-- include: redhat/pkg.yml
-  tags: monit_pkg
+- name: Main | Register Monit's Executable Location
+  shell: 'command -v monit'
+  register: _monit_executable
+  ignore_errors: yes
+  changed_when: false
+
+- name: Setting Monit's Executable Location
+  set_fact:
+    monit_executable: "{{ _monit_executable.stdout | default('/usr/local/bin/monit') }}"
+
+- include_vars: debian.yml
+  when:  ansible_os_family == "Debian"
+
+- include_vars: redhat.yml
   when: ansible_os_family == "RedHat"
 
-- include: config.yml
-  tags: monit_config
+- import_tasks: autostart.yml
+  tags: monit_autostart
+  become: true
 
-- include: monitors.yml
+- import_tasks: config.yml
+  tags: monit_config
+  become: true
+
+- import_tasks: monitors.yml
   tags: monit_monitors
+  become: true
 
 - include: integrations.yml
   tags: monit_integrations

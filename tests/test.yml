@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  become: true
+
+  vars:
+    monit_webinterface_acl_rules:
+      - localhost
+
+  roles:
+    - ansible-role-configure-monit

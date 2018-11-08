@@ -1,10 +1,67 @@
+---
+
 monit_cycle: 120
 monit_log_destination: /var/log/monit.log
 monit_lib_folder: /var/lib/monit
 monit_state_file: "{{ monit_lib_folder }}/state"
 monit_id_file: "{{ monit_lib_folder }}/id"
+monit_executable: /usr/local/bin/monit
+
+monit_eventqueue:
+  enabled: false
+  dir: "{{ monit_lib_folder }}/events"
+  slots: 1000
+  address: http://username:password@192.168.1.1:8080/collector
+
+parent_monit_services:
+  - name: Systemload
+    type: system
+    target: $HOST
+  - name: crond
+    type: process
+    target: /var/run/crond.pid
+    start: /etc/init.d/cron start
+    stop: /etc/init.d/cron stop
+    rules:
+      - if 5 restarts within 7 cycles then alert
+      - if 7 restarts within 10 cycles then unmonitor
+      - depend cron_bin
+      - depend cron_rc
+  - name: cron_bin
+    type: file
+    target: /usr/sbin/cron
+    rules:
+      - if failed checksum then alert
+      - if failed permission 755 then alert
+      - if failed uid root then alert
+      - if failed gid root then alert
+  - name: cron_rc
+    type: file
+    target: /etc/init.d/cron
+    rules:
+      - if failed checksum then alert
+      - if failed permission 755 then alert
+      - if failed uid root then alert
+      - if failed gid root then alert
+  - name: rsyslogd
+    type: process
+    target: /var/run/rsyslogd.pid
+    start: /etc/init.d/rsyslog start
+    stop: /etc/init.d/rsyslog stop
+    rules:
+      - if 5 restarts within 7 cycles then alert
+      - if 7 restarts within 10 cycles then unmonitor
+  - name: sshd
+    type: process
+    target: /var/run/sshd.pid
+    start: /etc/init.d/ssh start
+    stop: /etc/init.d/ssh stop
+    rules:
+      - if failed port {{ hostvars[inventory_hostname]['ssh_port'] }} protocol ssh for 5 times within 7 cycles then alert
+      - if failed port {{ hostvars[inventory_hostname]['ssh_port'] }} protocol ssh for 7 times within 10 cycles then restart
 
 monit_services: []
+
 monit_service_delete_unlisted: true
 
 monit_mail_enabled: false

@@ -2,23 +2,23 @@
 # {{ ansible_managed }}
 
 {% if monit_monitor.type == 'process' %}
-check process {{ monit_monitor.name }} with pidfile {{ monit_monitor.target }}
+check process {{ monit_monitor.name }} with pidfile "{{ monit_monitor.target }}"
 {% elif monit_monitor.type == 'process_by_name' %}
 check process {{ monit_monitor.name }} with matching "{{ monit_monitor.target }}"
 {% elif monit_monitor.type == 'file' %}
-check file {{ monit_monitor.name }} with path {{ monit_monitor.target }}
+check file {{ monit_monitor.name }} with path "{{ monit_monitor.target }}"
 {% elif monit_monitor.type == 'fifo' %}
-check fifo {{ monit_monitor.name }} with path {{ monit_monitor.target }}
+check fifo {{ monit_monitor.name }} with path "{{ monit_monitor.target }}"
 {% elif monit_monitor.type == 'filesystem' %}
-check filesystem {{ monit_monitor.name }} with path {{ monit_monitor.target }}
+check filesystem {{ monit_monitor.name }} with path "{{ monit_monitor.target }}"
 {% elif monit_monitor.type == 'directory' %}
-check directory {{ monit_monitor.name }} with path {{ monit_monitor.target }}
+check directory {{ monit_monitor.name }} with path "{{ monit_monitor.target }}"
 {% elif monit_monitor.type == 'host' %}
 check host {{ monit_monitor.name }} with address {{ monit_monitor.target }}
 {% elif monit_monitor.type == 'system' %}
-check system {{ monit_monitor.name }}
+check system "{{ monit_monitor.target }}"
 {% elif monit_monitor.type == 'program' %}
-check program {{ monit_monitor.name }} with path {{ monit_monitor.target }}
+check program {{ monit_monitor.name }} with path "{{ monit_monitor.target }}"
 {% elif monit_monitor.type == 'network' %}
 check network {{ monit_monitor.name }} with address {{ monit_monitor.target }}
 {% elif monit_monitor.type == 'network_by_interface' %}

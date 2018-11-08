@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Pro-active monitoring utility for unix systems
+After=network.target
+
+[Service]
+Type=simple
+KillMode=process
+ExecStart={{ monit_executable }} -I -c {{ monitrc_conf }}
+ExecStop={{ monit_executable }} -c {{ monitrc_conf }} quit
+ExecReload={{ monit_executable }} -c {{ monitrc_conf }} reload
+Restart=on-abnormal
+
+[Install]
+WantedBy=multi-user.target

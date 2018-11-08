@@ -1,0 +1,2 @@
+if 5 restarts within 7 cycles then alert
+if 7 restarts within 10 cycles then unmonitor

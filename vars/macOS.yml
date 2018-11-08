@@ -1,12 +1,13 @@
 ---
-monit_dir: /etc/monit
-monitrc_conf: "{{ monit_dir }}/monit.conf"
+
+monit_dir: /usr/local/etc/monit
+monitrc_conf: "{{ monit_dir }}/monitrc"
 monit_includes: "{{ monit_dir }}/conf.d"
 monit_alert_defaults: "{{ monit_dir }}/alert_defaults"
-monit_log_dir: /var/log/monit
+monit_log_dir: /usr/local/var/log/monit
 monit_log_destination: "{{ monit_log_dir }}/monit.log"
 
-monit_lib_folder: /var/lib/monit
+monit_lib_folder: /usr/local/var/lib/monit
 
 monit_owner: root
-monit_group: root
+monit_group: wheel

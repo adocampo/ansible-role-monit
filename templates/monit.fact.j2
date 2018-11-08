@@ -3,6 +3,9 @@
 {% for service in monit_services %}
     "{{ service.name }}",
 {% endfor %}
+{% for service in parent_monit_services %}
+    "{{ service.name }}",
+{% endfor %}
 {% if monit_mail_enabled %}
     "mail",
 {% endif %}
