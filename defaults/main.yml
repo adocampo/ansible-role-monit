@@ -60,13 +60,43 @@ parent_monit_services:
       - if failed port {{ hostvars[inventory_hostname]['ssh_port'] }} protocol ssh for 5 times within 7 cycles then alert
       - if failed port {{ hostvars[inventory_hostname]['ssh_port'] }} protocol ssh for 7 times within 10 cycles then restart
 
+monit_custom_checks: []
+monit_custom_checks_directory: /var/lib/monit/checks
+
 monit_services: []
 
 monit_service_delete_unlisted: true
+monit_start_monitors: true
 
 monit_mail_enabled: false
 monit_mailserver_host: localhost
 monit_mailserver_port: 25
+# if defined then supply the mail user credentials
+# monit_mailserver_user:
+# monit_mailserver_password:
+
+monit_alert_addresses: []
+  # - support@email.com
+
+monit_alert_mail_from: "root"
+monit_alert_mail_subject: 'Monit Alert: {{ inventory_hostname }}'
+monit_alert_mail_message: |+
+  $EVENT Service $SERVICE
+             Date:        $DATE
+             Action:      $ACTION
+             Host:        $HOST
+             Description: $DESCRIPTION
+        Your faithful employee,
+        Monit
+
+monit_alert_mail_format:
+  from: "{{ monit_alert_mail_from }}"
+  subject: "{{ monit_alert_mail_subject }}"
+  message: "{{ monit_alert_mail_message }}"
+
+monit_slack_webhook: false
+monit_slack_webhook_key: ''
+monit_slack_channel: 'general'
 
 monit_webinterface_enabled: true
 monit_webinterface_bind: 0.0.0.0
@@ -84,6 +114,10 @@ monit_rollbar_min_log_level: info
 monit_basic_monitors_enabled: true
 monit_ansible_role_name: "{{ ansible_hostname.split('-')[0] }}"
 
+# enabkle monit access over https
+monit_ssl_enable: no
+monit_ssl_cert: ''
+
 monit_apache_rules:
  - "if totalcpu > 80% for 3 cycles then alert"
  - "if totalmem > 400.0 MB for 5 cycles then alert"
@@ -93,3 +127,8 @@ monit_apache_rules:
 monit_memcached_rules:
  - "if failed host 127.0.0.1 port 11211 protocol MEMCACHE then restart"
  - "if cpu > 80% for 3 cycles then alert"
+
+
+# monit_webinterface_rw_group: Define group of users allowed to read and write on web interface. It is only applied when defined and is empty by default.
+# monit_webinterface_r_group: Define group of users allowed to read on web interface. It is only applied when defined and is empty by default.
+# monit_webinterface_acl_rules:List of ACL rules for the web interface, such as "localhost" or "hauk:password". It is only applied when defined and is empty by default.

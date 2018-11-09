@@ -1,5 +1,13 @@
 ---
 
+- name: monitors - custom checks directory
+  file:
+    path: "{{ monit_custom_checks_directory }}"
+    owner: root
+    group: root
+    state: directory
+  when: monit_custom_checks is defined and monit_custom_checks | length > 0
+
 - name: Monitors | Write Parent Monitors
   template:
     src: monitor.j2
@@ -12,11 +20,20 @@
   notify: restart monit
   when: parent_monit_services is defined
 
+- name: monitors - custom checks
+  copy:
+    dest: "{{ monit_custom_checks_directory }}/{{ item }}"
+    src: "files/{{ item }}"
+    mode: 0755
+    owner: root
+    group: root
+  with_items: "{{monit_custom_checks}}"
+
 - name: Monitors | Write Monitors
   template:
     src: monitor.j2
-    dest: "{{ monit_includes }}/{{ item.name }}"
-    owner: "{{ monit_owner }}"
+    dest: "{{ monit_includes }}/{{ item.name | replace (' ', '_') }}"
+ owner: "{{ monit_owner }}"
     group: "{{ monit_group }}"
     mode: 0660
   with_items:
@@ -42,7 +59,7 @@
   when: monit_write_facts.changed
 
 - name: Monitors | List Configured Monitors
-  command: ls -1 {{ monit_includes }}
+  command: "ls -1 {{ monit_includes }}"
   register: monit_services_present
   changed_when: false
 
@@ -51,8 +68,16 @@
     path: "{{ monit_includes }}/{{ item }}"
     state: absent
   with_items: "{{ monit_services_present.stdout_lines | default([]) }}"
-  when: monit_service_delete_unlisted and item|basename not in ansible_local.monit.monit_configured_services
-  notify: restart monit
+   when: monit_service_delete_unlisted and item|basename not in ansible_local.monit.monit_configured_services
+  notify: reload monit
+
+- meta: flush_handlers
+
+- name: monitors - Start configured monitors
+  command: monit start {{ item }}
+  with_items: "{{ansible_local.monit.monit_configured_services}}"
+  when: monit_start_monitors and ansible_local.monit.monit_configured_services is defined and item not in monit_unstartable_monitors
+  ignore_errors: yes
 
 - name: monitors - Enable basic monitors
   template:

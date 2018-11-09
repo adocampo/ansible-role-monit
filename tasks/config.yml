@@ -16,10 +16,35 @@
 - name: create lib folder
   file: path="{{ monit_lib_folder }}" state=directory mode=0600
 
+
+# Include variables and define needed variables.
+- name: Include OS-specific tasks | Debian.
+  include: Debian/pkg.yml
+  tags: monit_pkg
+  when: ansible_os_family == "Debian"
+
+- name: Include OS-specific tasks | Redhat.
+  include: RedHat/pkg.yml
+  tags: monit_pkg
+  when: ansible_os_family == "RedHat"
+
+- name: create includes folder
+  file:
+    path: "{{ monit_includes }}"
+    state: directory
+    mode: 0600
+
+
+- name: create id folder
+  file:
+    path: "{{ monit_id_folder }}"
+    state: directory
+    mode: 0600
+
 - name: config - Setup monitrc
   template:
     src: monitrc.j2
-    dest: "{{ monitrc_conf }}"
+    dest:  "{{ monitrc_conf }}"
     owner: "{{ monit_owner }}"
     group: "{{ monit_group }}"
     mode: 0700
@@ -67,9 +92,24 @@
   notify: restart monit
   when: monit_mail_enabled
 
-- name: log rotation
-  template: src=logrotate.j2 dest=/etc/logrotate.d/rollbar-agent owner=root group=root mode=0644
-  when: monit_rollbar_enabled
+- name: Create logrotate entry for monit.log
+  template:
+    src: logrotate_monit.j2
+    dest: "/etc/logrotate.d/monit"
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  when: ansible_os_family == "Debian"
+
+- name: Put up Slack integration file if required
+  template:
+    src: slack.rb.j2
+    dest: "/etc/monit/slack.rb"
+    owner: root
+    group: root
+    mode: 0744
+  become: true
 
 - name: Config | Config | Copy Over Alert Defaults
   copy:

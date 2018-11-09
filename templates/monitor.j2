@@ -1,8 +1,9 @@
 {% set monit_monitor = item -%}
-# {{ ansible_managed }}
+{% set monit_monitor_name = item.name | replace(' ', '_') -%}
+# Managed by Ansible, do not edit manually!
 
 {% if monit_monitor.type == 'process' %}
-check process {{ monit_monitor.name }} with pidfile "{{ monit_monitor.target }}"
+check process {{ monit_monitor_name }} with pidfile "{{ monit_monitor.target }}"
 {% elif monit_monitor.type == 'process_by_name' %}
 check process {{ monit_monitor.name }} with matching "{{ monit_monitor.target }}"
 {% elif monit_monitor.type == 'file' %}
@@ -24,7 +25,6 @@ check network {{ monit_monitor.name }} with address {{ monit_monitor.target }}
 {% elif monit_monitor.type == 'network_by_interface' %}
 check network {{ monit_monitor.name }} with interface {{ monit_monitor.target }}
 {% endif -%}
-
 {% if monit_monitor.start is defined %}
   start program = "{{ monit_monitor.start }}"
   {%- if monit_monitor.user is defined %} as uid {{monit_monitor.user}}{% endif %}
@@ -36,6 +36,17 @@ check network {{ monit_monitor.name }} with interface {{ monit_monitor.target }}
   {%- if monit_monitor.user is defined %} as uid {{monit_monitor.user}}{% endif %}
   {%- if monit_monitor.group is defined %} and gid {{monit_monitor.group}}{% endif %}
 {% endif %}
+{% elif monit_monitor.type == 'system' %}
+check system {{ monit_monitor_name }}
+{% elif monit_monitor.type == 'host' %}
+check host {{ monit_monitor_name }} with address {{ monit_monitor.target }}
+{% elif monit_monitor.type == 'filesystem' %}
+check filesystem {{ monit_monitor_name }} with path {{ monit_monitor.target }}
+{% elif monit_monitor.type == 'file' %}
+check file {{ monit_monitor_name }} with path {{ monit_monitor.target }}
+{% elif monit_monitor.type == 'program' %}
+check program {{ monit_monitor_name }} with path "{{ monit_monitor.target }}"
+{% endif -%}
 
 {% if monit_monitor.restart is defined %}
   restart program = "{{ monit_monitor.restart }}"
