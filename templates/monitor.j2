@@ -1,6 +1,5 @@
-{% set monit_monitor = item -%}
 {% set monit_monitor_name = item.name | replace(' ', '_') -%}
-# Managed by Ansible, do not edit manually!
+# {{ ansible_managed }}
 
 {% if monit_monitor.type == 'process' %}
 check process {{ monit_monitor_name }} with pidfile "{{ monit_monitor.target }}"
@@ -29,6 +28,7 @@ check network {{ monit_monitor.name }} with interface {{ monit_monitor.target }}
   start program = "{{ monit_monitor.start }}"
   {%- if monit_monitor.user is defined %} as uid {{monit_monitor.user}}{% endif %}
   {%- if monit_monitor.group is defined %} and gid {{monit_monitor.group}}{% endif %}
+  {%- if monit_monitor.start_timeout_seconds is defined %} with timeout {{monit_monitor.start_timeout_seconds}} seconds{% endif %}
 {% endif %}
 
 {% if monit_monitor.stop is defined %}
@@ -37,16 +37,23 @@ check network {{ monit_monitor.name }} with interface {{ monit_monitor.target }}
   {%- if monit_monitor.group is defined %} and gid {{monit_monitor.group}}{% endif %}
 {% endif %}
 {% elif monit_monitor.type == 'system' %}
-check system {{ monit_monitor_name }}
+check system {{ monit_monitor.name }}
 {% elif monit_monitor.type == 'host' %}
-check host {{ monit_monitor_name }} with address {{ monit_monitor.target }}
+check host {{ monit_monitor.name }} with address {{ monit_monitor.target }}
 {% elif monit_monitor.type == 'filesystem' %}
 check filesystem {{ monit_monitor_name }} with path {{ monit_monitor.target }}
 {% elif monit_monitor.type == 'file' %}
 check file {{ monit_monitor_name }} with path {{ monit_monitor.target }}
 {% elif monit_monitor.type == 'program' %}
 check program {{ monit_monitor_name }} with path "{{ monit_monitor.target }}"
-{% endif -%}
+    {% if monit_monitor.every is defined %}every "{{ monit_monitor.every }}"{% endif %}
+{% elif monit_monitor.type == 'program' %}
+check program {{ monit_monitor.name }} with path {{ monit_monitor.target }}
+    {% if monit_monitor.every is defined %}every "{{ monit_monitor.every }}"{% endif %}
+{% elif monit_monitor.type == 'apache-status' %}
+if failed host {{ monit_monitor.host }} port {{ monit_monitor.port }} protocol apache-status path {{ monit_monitor.target }}
+
+{% endif %}
 
 {% if monit_monitor.restart is defined %}
   restart program = "{{ monit_monitor.restart }}"

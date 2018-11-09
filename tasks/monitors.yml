@@ -1,5 +1,6 @@
 ---
 
+
 - name: monitors - custom checks directory
   file:
     path: "{{ monit_custom_checks_directory }}"
@@ -36,8 +37,7 @@
  owner: "{{ monit_owner }}"
     group: "{{ monit_group }}"
     mode: 0660
-  with_items:
-    - "{{ monit_services }}"
+  with_items: "{{ monit_services }}"
   notify: restart monit
 
 - name: Monitors | Create Facts Directory
