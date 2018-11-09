@@ -24,6 +24,10 @@ check network {{ monit_monitor.name }} with address {{ monit_monitor.target }}
 {% elif monit_monitor.type == 'network_by_interface' %}
 check network {{ monit_monitor.name }} with interface {{ monit_monitor.target }}
 {% endif -%}
+check process {{ monit_monitor_name }} with pidfile {{ monit_monitor.target }}
+{% if monit_monitor.group is defined %}
+  group "{{ monit_monitor.group }}"
+{% endif %}
 {% if monit_monitor.start is defined %}
   start program = "{{ monit_monitor.start }}"
   {%- if monit_monitor.user is defined %} as uid {{monit_monitor.user}}{% endif %}
@@ -60,9 +64,13 @@ if failed host {{ monit_monitor.host }} port {{ monit_monitor.port }} protocol a
   {%- if monit_monitor.user is defined %} as uid {{monit_monitor.user}}{% endif %}
   {%- if monit_monitor.group is defined %} and gid {{monit_monitor.group}}{% endif %}
 {% endif %}
-
 {% if monit_monitor.rules is defined %}
 {% for rule in monit_monitor.rules %}
   {{ rule }}
+{% endfor %}
+{% endif %}
+{% if monit_monitor.depends is defined %}
+{% for depend in monit_monitor.depends %}
+  depends on {{ depend }}
 {% endfor %}
 {% endif %}

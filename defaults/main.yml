@@ -2,11 +2,18 @@
 
 monit_cycle: 120
 monit_delay: 300
-monit_log_destination: /var/log/monit.log
+
+# Files & Paths
+monit_log_dir: /var/log/monit
+monit_conf_dir: /etc/monit
+monit_lib_dir: /var/lib/monit
+
 monit_lib_folder: /var/lib/monit
-monit_state_file: "{{ monit_lib_folder }}/state"
-monit_id_file: "{{ monit_lib_folder }}/id"
 monit_executable: /usr/local/bin/monit
+
+monit_state_file: "{{ monit_log_dir }}/state"
+monit_id_file: "{{ monit_log_dir }}/id"
+monit_log_destination: "{{ monit_log_dir }}/monit.log"
 
 monit_eventqueue:
   enabled: false
@@ -62,7 +69,7 @@ parent_monit_services:
       - if failed port {{ hostvars[inventory_hostname]['ssh_port'] }} protocol ssh for 7 times within 10 cycles then restart
 
 monit_custom_checks: []
-monit_custom_checks_directory: /var/lib/monit/checks
+monit_custom_checks_directory: "{{ monit_lib_dir }}/checks"
 
 monit_services: []
 
@@ -129,6 +136,21 @@ monit_memcached_rules:
  - "if failed host 127.0.0.1 port 11211 protocol MEMCACHE then restart"
  - "if cpu > 80% for 3 cycles then alert"
 
+#monit_version: 5.20.0
+# start on boot
+monit_service_enabled: true
+# current state: started, stopped
+monit_service_state: started
+## Service options
+monit_install_from_source: false
+
+monit_enable_superuser: false
+# Owner
+monit_user: monit
+monit_group: monit
+
+# deprecated vars
+monit_id_folder: "{{ monit_lib_dir }}"
 
 # monit_webinterface_rw_group: Define group of users allowed to read and write on web interface. It is only applied when defined and is empty by default.
 # monit_webinterface_r_group: Define group of users allowed to read on web interface. It is only applied when defined and is empty by default.

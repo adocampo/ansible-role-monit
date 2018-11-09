@@ -1,0 +1,27 @@
+---
+
+- name: MONIT | Ensure monit group
+  group:
+    name: "{{ monit_group }}"
+
+- name: MONIT | Ensure monit user
+  user:
+    name: "{{ monit_user }}"
+    group: "{{ monit_group }}"
+    home: /bin/false
+    createhome: yes
+
+- name: Include OS-specific tasks | Debian.
+  import_tasks: Debian/pkg.yml
+  tags: monit_pkg
+  when: ansible_os_family == "Debian" and not monit_install_from_source
+
+- name: Include OS-specific tasks | Redhat.
+  import_tasks: RedHat/pkg.yml
+  tags: monit_pkg
+  when: ansible_os_family == "RedHat"  and not monit_install_from_source
+
+- name: Install from source
+  import_tasks: Debian/install.yml
+  tags: monit_install
+  when: ansible_os_family == "Debian"  and monit_install_from_source
