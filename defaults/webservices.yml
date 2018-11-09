@@ -1,0 +1,33 @@
+monit_services:
+  - name: nginx
+    type: process
+    target: /var/run/nginx.pid
+    start: /bin/systemctl start nginx.service
+    stop: /bin/systemctl stop nginx.service
+    rules:
+      - "if failed host {{ server_hostname }} and port 80 protocol http with http headers [Host: {{ server_hostname }}, Cache-Control: no-cache] and request \"/\" then restart"
+      - "if 5 restarts within 5 cycles then timeout"
+
+  - name: sshd
+    type: process
+    target: /var/run/sshd.pid
+    start: /bin/systemctl start sshd.service
+    stop: /bin/systemctl stop sshd.service
+
+  - name: php-fpm
+    type: process
+    target: "/run/php/php{{ php_version }}-fpm.pid"
+    start: "/bin/systemctl start php{{ php_version }}-fpm.service"
+    stop: "/bin/systemctl stop php{{ php_version }}-fpm.service"
+    rules:
+      - "if failed port 9000 type TCP then restart"
+      - "if 5 restarts with 5 cycles then timeout"
+
+  - name: mysql
+    type: process
+    target: /var/lib/mysql/mysql.pid
+    start: /bin/systemctl start mysql.service
+    stop: /bin/systemctl stop mysql.service
+    rules:
+      - "if failed port {{ mysql_port }} type TCP then restart"
+      - "if 5 restarts with 5 cycles then timeout"
