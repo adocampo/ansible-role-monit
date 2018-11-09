@@ -1,4 +1,4 @@
-check system {{ ansible_hostname }}
+check system {{ ansible_hostname }}_system_monitor
   if memory > 80% for 2 cycles then
   {%- if monit_slack_webhook_url is defined %}
     exec "/usr/local/bin/slack.sh" else if succeeded then exec "/usr/local/bin slack.sh"

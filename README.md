@@ -46,6 +46,17 @@ You'll need to have monit already installed; either through your system's packag
   * `user`: Linux username of the user starting the program. Optional
   * `group`: Linux group of the user starting the program. Optional
   * `rules`: List of rules to be included in this service. Optional
+Molecule
+------------
+
+molecule default directories structure can be created with commands:
+```
+molecule init scenario --scenario-name default --role-name ansible-role-monit
+molecule init role --role-name ansible-role-monit
+```
+
+Role Variables
+--------------
 
 For those of you who are wondering about using `depends` lines in your config files, you can write the dependency with the title in the above rule line, but then you'll need to create a new rule dictionary entry that will consequently create another file. As long as the `names` match, monit will know.
 
@@ -113,7 +124,7 @@ MIT
 
 ## CONTRIBUTORS
 
-The below contributors are from the prior project. Keeping the list here for posterity.
+Feel free to contribute by add issue and pull request.
 
 * [Amnay](https://github.com/amnay-mo)
 * [Anthony Dmitriyev](https://github.com/antstorm)

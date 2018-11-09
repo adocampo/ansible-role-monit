@@ -21,7 +21,10 @@
   tags: monit_config
   become: true
 
-- import_tasks: monitors.yml
+- include: custom.yml
+  tags: monit_custom
+
+- include: monitors.yml
   tags: monit_monitors
   become: true
 

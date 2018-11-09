@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 
-set daemon {{ monit_cycle }}
+set daemon {{ monit_cycle }} with start delay {{ monit_delay }}
 
 set logfile {{ monit_log_destination }}
 set statefile {{ monit_state_file }}

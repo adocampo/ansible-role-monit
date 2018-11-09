@@ -1,0 +1,8 @@
+---
+- name: custom - Copy custom monitor helpers
+  copy:
+    src: "{{ item }}"
+    dest: "/bin/{{ item }}"
+    mode: 0755
+  with_items:
+    - assert-max-files.sh
