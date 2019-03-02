@@ -14,14 +14,14 @@
 - name: Include OS-specific tasks | Debian.
   import_tasks: Debian/pkg.yml
   tags: monit_pkg
-  when: ansible_os_family == "Debian" and not monit_install_from_source
-
-- name: Include OS-specific tasks | Redhat.
-  import_tasks: RedHat/pkg.yml
-  tags: monit_pkg
-  when: ansible_os_family == "RedHat"  and not monit_install_from_source
+  when: not monit_install_from_source
 
 - name: Install from source
   import_tasks: Debian/install.yml
   tags: monit_install
-  when: ansible_os_family == "Debian"  and monit_install_from_source
+  when: monit_install_from_source
+
+- import_tasks: autostart.yml
+  tags: monit_autostart
+  become: true
+  when: monit_install_from_source

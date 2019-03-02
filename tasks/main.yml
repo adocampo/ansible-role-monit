@@ -1,4 +1,8 @@
 ---
+
+- import_tasks: install.yml
+  tags: monit_install
+
 - name: Main | Register Monit's Executable Location
   shell: 'command -v monit'
   register: _monit_executable
@@ -13,13 +17,6 @@
   include_vars: "{{ ansible_os_family }}.yml"
   tags: always
 
-- import_tasks: install.yml
-  tags: monit_install
-
-- import_tasks: autostart.yml
-  tags: monit_autostart
-  become: true
-
 - import_tasks: config.yml
   tags: monit_config
   become: true
@@ -33,11 +30,6 @@
 
 - import_tasks: service.yml
   tags: monit_service
-
-
-# - name: ensure monit starts on a fresh reboot
-#   service: name=monit state=started enabled=yes
-
 
 - include: integrations.yml
   tags: monit_integrations

@@ -1,6 +1,5 @@
 ---
 
-
 - name: monitors - custom checks directory
   file:
     path: "{{ monit_custom_checks_directory }}"
